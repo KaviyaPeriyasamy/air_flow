@@ -1,0 +1,39 @@
+frappe.ui.form.on('Quotation', {
+	refresh(frm) {
+		// your code here
+	}
+});
+
+frappe.ui.form.on('Quotation Item',"capacity_cfm",function(frm, cdt, cdn){
+    var d = locals[cdt][cdn];
+    var capacity_cmh='';
+    var capacity_cfm = d.capacity_cfm.split(' / ');
+    for (let val in capacity_cfm) {
+		capacity_cmh += cstr(Math.round(((flt(capacity_cfm[val]) * 1.7) * 100))/ 100)+' / ';
+	}
+    frappe.model.set_value(cdt, cdn, "capacity_cmh", capacity_cmh.slice(0,-3) );
+});
+frappe.ui.form.on('Quotation Item',"o_v_m_s",function(frm, cdt, cdn){
+    var a = locals[cdt][cdn];
+    var vel_pr ='';
+    var o_v_m_s = a.o_v_m_s.split(' / ');
+    for (let val in o_v_m_s) {
+		vel_pr += cstr(Math.round(((0.5*1.2*flt(o_v_m_s[val])*flt(o_v_m_s[val])/9.81) * 100))/100)+' / ';
+	}
+    frappe.model.set_value(cdt, cdn, "vel_pr", vel_pr.slice(0,-3));
+});
+frappe.ui.form.on('Quotation Item',"capacity_cmh",function(frm, cdt, cdn){
+    var b = locals[cdt][cdn];
+    var o__v_m__s ='';
+    var capacity_cmh = b.capacity_cmh.split(' / ');
+    for (let val in capacity_cmh) {
+		o__v_m__s += cstr(Math.round((flt(capacity_cmh[val])/3600/(3.14/4*b.fan_dia_/1000*b.fan_dia_/1000)) * 100) / 100)+' / ';
+	}
+    frappe.model.set_value(cdt, cdn, "o_v_m_s", o__v_m__s.slice(0,-3));
+}); 
+frappe.ui.form.on('Quotation Item',"bkw",function(frm, cdt, cdn){
+    var c = locals[cdt][cdn];
+    // frappe.model.set_value(cdt, cdn, "eff", c.capacity_cmh/3600*(c.st_pr+c.vel_pr)/102/c.bkw);
+    frappe.model.set_value(cdt, cdn, "suggested_bkw", c.fan_bkw*1.1,2);
+});
+
