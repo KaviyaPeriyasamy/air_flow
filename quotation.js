@@ -3,7 +3,26 @@ frappe.ui.form.on('Quotation', {
 		// your code here
 	}
 });
-
+frappe.ui.form.on('Quotation Item',"outlet_area",function(frm, cdt, cdn){
+    var b = locals[cdt][cdn];
+    var o__v_m__s ='';
+    var outlet_area = b.outlet_area.split(' / ');
+    var capacity_cfm = b.capacity_cfm.split(' / ');
+    for (let val in outlet_area) {
+        o__v_m__s += cstr(Math.round((flt(capacity_cfm[val])/flt(outlet_area[val])/196.8/flt(b.qty)) * 100) / 100)+' / ';
+	}
+    frappe.model.set_value(cdt, cdn, "o_v_m_s", o__v_m__s.slice(0,-3));
+});
+frappe.ui.form.on('Quotation Item',"qty",function(frm, cdt, cdn){
+    var b = locals[cdt][cdn];
+    var o__v_m__s ='';
+    var outlet_area = b.outlet_area.split(' / ');
+    var capacity_cfm = b.capacity_cfm.split(' / ');
+    for (let val in outlet_area) {
+        o__v_m__s += cstr(Math.round((flt(capacity_cfm[val])/flt(outlet_area[val])/196.8/flt(b.qty)) * 100) / 100)+' / ';
+	}
+    frappe.model.set_value(cdt, cdn, "o_v_m_s", o__v_m__s.slice(0,-3));
+});
 frappe.ui.form.on('Quotation Item',"capacity_cfm",function(frm, cdt, cdn){
     var d = locals[cdt][cdn];
     var capacity_cmh='';
@@ -41,7 +60,7 @@ frappe.ui.form.on('Quotation Item',"fan_bkw",function(frm, cdt, cdn){
     var capacity_cmh = c.capacity_cmh.split(' / ');
     for (let val in fan_bkw) {
 		suggested_bkw += cstr(Math.round(flt(fan_bkw[val] *1.1) * 100) / 100)+' / ';
-		eff += cstr((Math.round((flt(capacity_cmh[val])/3600*(flt(static_pr[val])+flt(vel_pr[val]))/102/flt(fan_bkw[val])) * 100) / 100) *100)+'% / ';
+		eff += cstr(Math.round((((flt(capacity_cmh[val])/3600*(flt(static_pr[val])+flt(vel_pr[val]))/102/flt(fan_bkw[val]))) * 100) *100)/100)+'% / ';
 	}
     frappe.model.set_value(cdt, cdn, "efficiency", eff.slice(0,-3));
     frappe.model.set_value(cdt, cdn, "suggested_bkw", suggested_bkw.slice(0,-3));
