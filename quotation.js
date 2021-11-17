@@ -15,6 +15,7 @@ frappe.ui.form.on('Quotation Item',"outlet_area",function(frm, cdt, cdn){
 });
 frappe.ui.form.on('Quotation Item',"qty",function(frm, cdt, cdn){
     var b = locals[cdt][cdn];
+    if(b.fan_type == "Double Skin"){
     var o__v_m__s ='';
     var outlet_area = b.outlet_area.split(' / ');
     var capacity_cfm = b.capacity_cfm.split(' / ');
@@ -22,9 +23,19 @@ frappe.ui.form.on('Quotation Item',"qty",function(frm, cdt, cdn){
         o__v_m__s += cstr(Math.round((flt(capacity_cfm[val])/flt(outlet_area[val])/196.8/flt(b.qty)) * 100) / 100)+' / ';
 	}
     frappe.model.set_value(cdt, cdn, "o_v_m_s", o__v_m__s.slice(0,-3));
+    }
 });
 frappe.ui.form.on('Quotation Item',"capacity_cfm",function(frm, cdt, cdn){
     var d = locals[cdt][cdn];
+    if(d.fan_type == "Double Skin"){
+    var o__v_m__s ='';
+    var outlet_area = d.outlet_area.split(' / ');
+    var capacity_cfm = d.capacity_cfm.split(' / ');
+    for (let val in outlet_area) {
+        o__v_m__s += cstr(Math.round((flt(capacity_cfm[val])/flt(outlet_area[val])/196.8/flt(d.qty)) * 100) / 100)+' / ';
+	}
+    frappe.model.set_value(cdt, cdn, "o_v_m_s", o__v_m__s.slice(0,-3));
+    }
     var capacity_cmh='';
     var capacity_cfm = d.capacity_cfm.split(' / ');
     for (let val in capacity_cfm) {
@@ -43,13 +54,26 @@ frappe.ui.form.on('Quotation Item',"o_v_m_s",function(frm, cdt, cdn){
 });
 frappe.ui.form.on('Quotation Item',"capacity_cmh",function(frm, cdt, cdn){
     var b = locals[cdt][cdn];
+    if(b.fan_type == "Single Skin"){
     var o__v_m__s ='';
     var capacity_cmh = b.capacity_cmh.split(' / ');
     for (let val in capacity_cmh) {
 		o__v_m__s += cstr(Math.round((flt(capacity_cmh[val])/3600/(3.14/4*b.fan_dia_/1000*b.fan_dia_/1000)) * 100) / 100)+' / ';
 	}
     frappe.model.set_value(cdt, cdn, "o_v_m_s", o__v_m__s.slice(0,-3));
-}); 
+    }
+});
+frappe.ui.form.on('Quotation Item',"fan_dia_",function(frm, cdt, cdn){
+    var b = locals[cdt][cdn];
+    if(b.fan_type == "Single Skin"){
+    var o__v_m__s ='';
+    var capacity_cmh = b.capacity_cmh.split(' / ');
+    for (let val in capacity_cmh) {
+		o__v_m__s += cstr(Math.round((flt(capacity_cmh[val])/3600/(3.14/4*b.fan_dia_/1000*b.fan_dia_/1000)) * 100) / 100)+' / ';
+	}
+    frappe.model.set_value(cdt, cdn, "o_v_m_s", o__v_m__s.slice(0,-3));
+    }
+});
 frappe.ui.form.on('Quotation Item',"fan_bkw",function(frm, cdt, cdn){
     var c = locals[cdt][cdn];
     var suggested_bkw ='';
@@ -65,4 +89,3 @@ frappe.ui.form.on('Quotation Item',"fan_bkw",function(frm, cdt, cdn){
     frappe.model.set_value(cdt, cdn, "efficiency", eff.slice(0,-3));
     frappe.model.set_value(cdt, cdn, "suggested_bkw", suggested_bkw.slice(0,-3));
 });
-
